@@ -1,103 +1,6 @@
-
-# CS453/553 Client-Server Architecture Project
-
-This repository contains the **starter template** for the semester project in  
-**CS453 / CS553 – Client/Server Architectures**.
-
-Students will build and extend a distributed web application over the course
-of the semester. The system will evolve through several architectural stages,
-mirroring the historical evolution of modern web systems.
-
-The goal of the project is to help students understand **how real client/server
-systems are designed and built**, including:
-
-- REST API design
-- database integration
-- authentication and authorization
-- multi-service architectures
-- real-time communication
-- modern API technologies
-
----
-
-# Project Overview
-
-The semester project is a **Task / Project Management System**.
-
-The application allows users to:
-
-- create projects
-- create tasks within projects
-- assign tasks to users
-- track task status
-- comment on tasks
-- view project activity
-
-This domain is intentionally simple so that the focus remains on **system
-architecture and communication between components**, rather than complex
-business logic.
-
----
-
-# Architecture Overview
-
-The system follows a typical web architecture.
-
-```shell
-Browser Client
-|
-v
-REST API
-|
-v
-PostgreSQL
-```
-
-
-Over the semester, the architecture will evolve to include additional
-components such as authentication services, real-time communication,
-and potentially additional APIs.
-
-Example extended architecture:
-
-```shell
-Browser Client
-|
-v
-API Layer
-/
-Auth API Task API
-|
-v
-PostgreSQL
-```
-
----
-
-# Technology Stack
-
-The default project stack is:
-
-Server
-- Node.js
-- TypeScript
-- Express
-
-Database
-- PostgreSQL
-
-Development Tools
-- Docker (for database)
-- npm
-- Git
-
-Students who prefer Python may implement the server using **FastAPI**, but
-all examples and starter code will use **TypeScript**.
-
----
-
-# Repository Structure
-
+# CS453 Project Checkpoint 1
+Belle Cowan
+## Repository Structure
 ```shell
 cs453-project-template
 │
@@ -122,112 +25,68 @@ cs453-project-template
 │
 └── README.md
 ```
-
----
-
-# Development Setup
-
-## 1. Clone the repository
-
-```shell
-git clone <your-repository-url>
-cd cs453-project-template
-```
-
-## 2. Start the database
-
-This project uses Docker to run PostgreSQL locally.
-
-```shell
-docker-compose up -d
-```
-
-This will start a PostgreSQL database container.
-
----
-
-## 3. Install dependencies
-
+### How to Install dependencies
 ```shell
 cd apps/api
 npm install
 ```
+---
+## How to Start the database
+
+This project uses Docker to run PostgreSQL locally.
+```shell
+docker-compose up -d
+```
+This will start a PostgreSQL database container.
 
 ---
-
-## 4. Run the server
+### How to Run the server
 ```shell
+cd apps/api
 npm run dev
 ```
-
 
 The API server should start locally.
 
 ---
+## How to Create Database Tables
 
-# Project Milestones
+To create the database tables, you will need to have PostgreSQL installed and running.
 
-The project will evolve over several milestones during the semester.
+Run the following command from the repo root (cs453-project-template/)
+```shell
+psql postgresql://postgres:postgres@localhost:5432/cs453 -f database/schema.sql
+```
 
-### Milestone 1 – REST API
+## API Routes
 
-Students will implement:
-
-- REST endpoints
-- database integration
-- CRUD operations
-- request validation
-
+| Method | Route        | Description             |
+|--------|--------------|-------------------------|
+| GET    | `/health`    | API health check        |
+| GET    | `/db-health` | Database health check   |
+| GET    | `/tasks`     | Return all tasks        |
+| POST   | `/tasks`     | Create a task           |
+| GET    | `/tasks/:id` | Return a task by ID     |
+| PATCH  | `/tasks/:id` | Update an existing task |
+| DELETE | `/tasks/:id` | Delete a task by ID     |
 ---
+## Reflection Questions
+### What is the difference between an in-memory API and a database-backed API?
+An in-memory API only stores data while the server is running, so everything is lost when the server restarts. A database-backed API stores the data in a database instead, so the information is still there the next time the server is started.
+### Why is it useful to separate routes, services, and database logic?
+It is useful to separate the routes, services, and database logic because it makes the project much easier to work in when everything is organized neatly and the files don't get too unnecessarily large. The routes only have to handle the requests and responses, and the service functions handle the SQL queries.
+### What HTTP status codes did you use, and why?
+I used:
 
-### Milestone 2 – Authentication
+- 200 for successful requests
+- 201 when a new task was created
+- 204 when a task was deleted
+- 400 when the client sent invalid input
+- 404 when a task couldn't be found 
+- 500 if something unexpected happened on the server
 
-Students will add:
-
-- user accounts
-- password hashing
-- login endpoints
-- JWT authentication
-- protected routes
-
----
-
-### Milestone 3 – Architectural Extensions
-
-Students will extend the system with at least one of the following:
-
-- WebSockets for real-time updates
-- GraphQL API
-- multi-service architecture
-- asynchronous messaging
-- advanced API documentation
-
-Graduate students will complete an additional architecture extension and
-design analysis.
-
----
-
-# Learning Goals
-
-By completing this project students should understand:
-
-- how client/server systems communicate
-- how APIs are designed and implemented
-- how databases integrate with web services
-- how authentication works in distributed systems
-- how modern web architectures evolve over time
-
----
-
-# Academic Integrity
-
-All work submitted for this project must be your own.
-
-Students may use documentation and external references, but copying code
-from other students or online repositories is considered academic misconduct.
-
----
-
-# License
-
-This repository is provided for educational use in CS453/553.
+I used these specific status codes because they are the same codes we have been using in the labs, and they fit each scenario based on their standardized uses.
+### What happens when a client requests a task ID that does not exist?
+The API returns a 404 status code along with a JSON error message saying that the task was not found. This lets the client know that the request was valid, but the task they were looking for doesn't exist.
+### What was the hardest part of connecting the API to PostgreSQL?
+The hardest part of connecting the API to PostgreSQL was downloading PostgreSQL because the wizard asked way too many questions.
